@@ -7,18 +7,22 @@ import java.net.URL
 import java.nio.channels.Channels
 import java.nio.file.{Files, Path, Paths}
 import java.nio.file.attribute.BasicFileAttributes
+
 import properties.GeneralProperties._
+
 import scala.util.{Failure, Success, Try}
 import java.time.LocalDateTime
 import java.time.ZoneId
 
+import okhttp3.HttpUrl
+
 object FileOperator {
 
-  def downloadFile(url: String, destFileAbsPath: String): Unit = {
+  def downloadFile(httpUrl: HttpUrl, destFileAbsPath: String): Unit = {
     val result = Try(
-      new FileOutputStream(destFileAbsPath + slash +  url.split("/").last)
+      new FileOutputStream(destFileAbsPath + slash +  httpUrl.url().toString.split("/").last)
         .getChannel.transferFrom(Channels.newChannel(
-        new URL(url).openStream()), 0, Long.MaxValue
+        httpUrl.url.openStream()), 0, Long.MaxValue
       )
     )
     result match {
@@ -42,6 +46,10 @@ object FileOperator {
       case Success(s) => println(s"File '$absPath' was remove!")
       case Failure(f) => throw new Exception(f.getMessage)
     }
+  }
+
+  def exists(absPath: String): Boolean = {
+    Files.exists(Paths.get(absPath))
   }
 
   def getCreationDate(absPath: String): LocalDateTime = {
