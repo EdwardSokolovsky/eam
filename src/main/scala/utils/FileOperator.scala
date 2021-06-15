@@ -3,24 +3,19 @@ package utils
 import net.lingala.zip4j.core.ZipFile
 import net.lingala.zip4j.exception.ZipException
 import java.io.FileOutputStream
-import java.net.URL
 import java.nio.channels.Channels
-import java.nio.file.{Files, Path, Paths}
+import java.nio.file.{Files, Paths}
 import java.nio.file.attribute.BasicFileAttributes
-
-import properties.GeneralProperties._
-
 import scala.util.{Failure, Success, Try}
 import java.time.LocalDateTime
 import java.time.ZoneId
-
 import okhttp3.HttpUrl
 
 object FileOperator {
 
   def downloadFile(httpUrl: HttpUrl, destFileAbsPath: String): Unit = {
     val result = Try(
-      new FileOutputStream(destFileAbsPath + slash +  httpUrl.url().toString.split("/").last)
+      new FileOutputStream(destFileAbsPath)
         .getChannel.transferFrom(Channels.newChannel(
         httpUrl.url.openStream()), 0, Long.MaxValue
       )

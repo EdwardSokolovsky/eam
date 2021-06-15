@@ -37,7 +37,7 @@ class Updater(addonsFolderPath: String) {
   def update(addonsToUpdate: Map[String, HttpUrl], addonsFolder: String): Unit = {
     addonsToUpdate.foreach(addon => {
       val addonFolder = addonsFolder + slash + addon._1
-      val addonZipFile = addonsFolder + slash + addon._1 + ".zip"
+      val addonZipFile = addonsFolder + slash + addon._1 + addonsPackageFormat
       val mayByFile = Try(FileOperator.downloadFile(addon._2, addonZipFile))
       mayByFile match {
         case Success(file) =>
