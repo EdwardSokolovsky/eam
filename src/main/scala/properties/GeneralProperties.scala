@@ -4,7 +4,7 @@ import java.io.File
 
 object GeneralProperties {
 
-  val appName: String = "Edward's WoW Addon's manager"
+  val appName: String = "Edward's WoW Addon's Manager"
   val appVersion: String = "0.1"
   val addonsPackageFormat: String = ".zip"
   val wowGameId: Int = 1
