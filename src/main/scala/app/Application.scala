@@ -1,6 +1,6 @@
 package app
 
-import javax.swing.{JFileChooser, JFrame, JOptionPane, JTextArea}
+import javax.swing._
 import consts.Messages._
 import okhttp3.HttpUrl
 
@@ -8,6 +8,7 @@ import scala.swing._
 import scala.swing.event.ButtonClicked
 import properties.GeneralProperties._
 import utils.{FileOperator, Updater}
+
 import scala.util.{Failure, Success, Try}
 
 class Application extends SimpleSwingApplication {
@@ -15,6 +16,8 @@ class Application extends SimpleSwingApplication {
   private var addonsMap: Map[String, HttpUrl] = _
 
   def top: MainFrame = new MainFrame {
+
+    iconImage = toolkit.getImage(getClass.getClassLoader.getResource("logo.png").toURI.toURL)
 
     title = s"$appName v.$appVersion"
 
@@ -45,6 +48,9 @@ class Application extends SimpleSwingApplication {
     }
 
     contents = new BoxPanel(scala.swing.Orientation.Vertical) {
+//      contents += new Label {
+//        icon = new ImageIcon(getClass.getClassLoader.getResource("logo.png"))
+//      }
       contents += new Label("Addon's folder:")
       contents += new ScrollPane(addonsFolder)
       contents += changeAddonsFolder
