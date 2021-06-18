@@ -2,14 +2,17 @@ package utils
 
 import net.lingala.zip4j.core.ZipFile
 import net.lingala.zip4j.exception.ZipException
-import java.io.FileOutputStream
+import java.io.{File, FileOutputStream}
 import java.nio.channels.Channels
 import java.nio.file.{Files, Paths}
 import java.nio.file.attribute.BasicFileAttributes
+
 import scala.util.{Failure, Success, Try}
 import java.time.LocalDateTime
 import java.time.ZoneId
+
 import okhttp3.HttpUrl
+import org.springframework.util.FileSystemUtils
 
 object FileOperator {
 
@@ -35,16 +38,24 @@ object FileOperator {
     }
   }
 
-  def removeFile(absPath: String): Unit = {
-    val result = Try(Files.deleteIfExists(Paths.get(absPath)))
-    result match {
-      case Success(s) => println(s"File '$absPath' was remove!")
-      case Failure(f) => throw new Exception(f.getMessage)
+  def removeFileOrFolder(absPath: String): Unit = {
+    if(Files.exists(Paths.get(absPath))){
+      FileSystemUtils.deleteRecursively(new File(absPath))
     }
   }
 
   def exists(absPath: String): Boolean = {
     Files.exists(Paths.get(absPath))
+  }
+
+  def mkdirRecursive(absPath: String): Unit = {
+    val path = Paths.get(absPath)
+    if(!Files.exists(path)){Files.createDirectories(Paths.get(absPath))}
+  }
+
+  def writeTextFile(text: String, absPath: String): Unit = {
+    val path = Paths.get(absPath)
+    Files.write(path,text.getBytes)
   }
 
   def getCreationDate(absPath: String): LocalDateTime = {

@@ -3,114 +3,111 @@ package app
 import javax.swing._
 import consts.Messages._
 import okhttp3.HttpUrl
-
 import scala.swing._
 import scala.swing.event.ButtonClicked
 import properties.GeneralProperties._
 import utils.{FileOperator, Updater}
-
 import scala.util.{Failure, Success, Try}
 
 class Application extends SimpleSwingApplication {
 
   private var addonsMap: Map[String, HttpUrl] = _
+  private val (topB, leftB, bottomB, rightB) = (15, 10, 10, 10)
+  private val AddonsFolderLineSize = 30
 
   def top: MainFrame = new MainFrame {
 
     iconImage = toolkit.getImage(getClass.getClassLoader.getResource("logo.png").toURI.toURL)
 
-    title = s"$appName v.$appVersion"
+    title = appName + " v." + appVersion
 
-    object changeAddonsFolder extends Button {
+    object ChangeAddonsFolder extends Button {
       text = "Select addon's folder"
     }
 
-    object refreshBtn extends Button {
+    object RefreshBtn extends Button {
       text = "Refresh"
     }
 
-    object updateAllBtn extends Button {
+    object UpdateAllBtn extends Button {
       text = "Update All"
     }
 
-    object addonsFolder extends TextArea {
+    object AddonsFolder extends TextArea {
       this.editable = false
-      columns = 30
+      columns = AddonsFolderLineSize
     }
 
-    object addonsList extends TextArea {
+    object AddonsList extends TextArea {
       this.editable = false
       this.text = defaultInfo
     }
 
-    object exitButton extends Button {
+    object ExitButton extends Button {
       text = "Exit"
     }
 
     contents = new BoxPanel(scala.swing.Orientation.Vertical) {
-//      contents += new Label {
-//        icon = new ImageIcon(getClass.getClassLoader.getResource("logo.png"))
-//      }
       contents += new Label("Addon's folder:")
-      contents += new ScrollPane(addonsFolder)
-      contents += changeAddonsFolder
+      contents += new ScrollPane(AddonsFolder)
+      contents += ChangeAddonsFolder
       contents += new Label("Addon's list:")
-      contents += new ScrollPane(addonsList)
-      contents += refreshBtn
-      contents += updateAllBtn
-      contents += exitButton
-      border = Swing.EmptyBorder(15, 10, 10, 10)
+      contents += new ScrollPane(AddonsList)
+      contents += RefreshBtn
+      contents += UpdateAllBtn
+      contents += ExitButton
+      border = Swing.EmptyBorder(topB, leftB, bottomB, rightB)
     }
 
-    listenTo(changeAddonsFolder, refreshBtn, exitButton)
+    listenTo(ChangeAddonsFolder, RefreshBtn, ExitButton)
 
-    changeAddonsFolder.reactions += {
-      case ButtonClicked(`changeAddonsFolder`) =>
+    ChangeAddonsFolder.reactions += {
+      case ButtonClicked(ChangeAddonsFolder) =>
         var result = selectAddonsFolder
-        if (result.nonEmpty) addonsFolder.text = result
+        if (result.nonEmpty) AddonsFolder.text = result
     }
-    refreshBtn.reactions += {
-      case ButtonClicked(`refreshBtn`) =>
-        if (addonsFolder.text.nonEmpty) {
-          if (FileOperator.exists(addonsFolder.text)) {
-            val result = Try(addonsList.text = checkAddons(addonsFolder.text))
+    RefreshBtn.reactions += {
+      case ButtonClicked(RefreshBtn) =>
+        if (AddonsFolder.text.nonEmpty) {
+          if (FileOperator.exists(AddonsFolder.text)) {
+            val result = Try(AddonsList.text = checkAddons(AddonsFolder.text))
             result match {
-              case Success(s) => println("Refrash successful!")
+              case Success(s) => println("Refresh successful!")
               case Failure(f) =>
                 JOptionPane.showMessageDialog(
-                  new JFrame(), somethingWrongMsg, "Error!", JOptionPane.ERROR_MESSAGE
+                  new JFrame(), somethingWrongMsg, errorWindowName, JOptionPane.ERROR_MESSAGE
                 )
             }
           } else {
             JOptionPane.showMessageDialog(
-              new JFrame(), pathDoesnotExistsMsg(addonsFolder.text), "Error!", JOptionPane.ERROR_MESSAGE
+              new JFrame(), pathDoesnotExistsMsg(AddonsFolder.text), errorWindowName, JOptionPane.ERROR_MESSAGE
             )
           }
         }
     }
-    updateAllBtn.reactions += {
-      case ButtonClicked(`updateAllBtn`) =>
-        if (addonsFolder.text.nonEmpty) {
-          if (FileOperator.exists(addonsFolder.text)) {
-            val result = updateAll(addonsFolder.text, addonsMap)
+    UpdateAllBtn.reactions += {
+      case ButtonClicked(UpdateAllBtn) =>
+        if (AddonsFolder.text.nonEmpty) {
+          if (FileOperator.exists(AddonsFolder.text)) {
+            val result = updateAll(AddonsFolder.text, addonsMap)
             if (result._2){
               JOptionPane.showMessageDialog(
-                new JFrame(), doneMsg, "Info!", JOptionPane.INFORMATION_MESSAGE
+                new JFrame(), doneMsg, infoWindowName, JOptionPane.INFORMATION_MESSAGE
               )
             } else {
               JOptionPane.showMessageDialog(
-                new JFrame(), result._1, "Error!", JOptionPane.ERROR_MESSAGE
+                new JFrame(), result._1, errorWindowName, JOptionPane.ERROR_MESSAGE
               )
             }
           } else {
             JOptionPane.showMessageDialog(
-              new JFrame(), pathDoesnotExistsMsg(addonsFolder.text), "Warning!", JOptionPane.ERROR_MESSAGE
+              new JFrame(), pathDoesnotExistsMsg(AddonsFolder.text), warningWindowName, JOptionPane.ERROR_MESSAGE
             )
           }
         }
     }
-    exitButton.reactions += {
-      case ButtonClicked(`exitButton`) =>
+    ExitButton.reactions += {
+      case ButtonClicked(ExitButton) =>
         sys.exit(0)
     }
   }

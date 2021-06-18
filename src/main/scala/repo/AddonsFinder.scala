@@ -1,25 +1,22 @@
 package repo
 
 import properties.GeneralProperties._
-import collection.JavaConverters._
+import scala.compat.java8.OptionConverters._
 import com.therandomlabs.curseapi.CurseAPI
-import com.therandomlabs.curseapi.game.{CurseCategory, CurseCategorySection}
 import com.therandomlabs.curseapi.project.{CurseProject, CurseSearchQuery}
+import scala.io.Source
 
 object AddonsFinder {
 
-  def findAddon(nameOrPartName: String): List[CurseProject] = {
-    val projectBuffer = scala.collection.mutable.ListBuffer[CurseProject]()
-    val ccs: Set[CurseCategorySection] = CurseAPI.game(1).get().categorySections().asScala.toSet
-    val addonsCategories = ccs.map(section => section.categories()).head.asScala.toSet
-    addonsCategories.foreach(c => {
-      val sectionId = c.sectionID()
-      val query = new CurseSearchQuery().gameID(wowGameId).categorySectionID(sectionId)
-      val filter = query.searchFilter(nameOrPartName)
-      val result = CurseAPI.searchProjects(filter)
-      projectBuffer.++=(result.get.asScala.toList)
-    })
-    projectBuffer.toList
+  def getAddon(addonFolderAbsPath: String): Option[CurseProject] = {
+    val curseProject = CurseAPI.project(getAddonId(addonFolderAbsPath))
+    curseProject.asScala
+  }
+
+  private def getAddonId(addonFolderAbsPath: String): Int = {
+    val metainf = addonFolderAbsPath + slash + addonFolderAbsPath.split('\\').last + metainfExtension
+    val titleLine = Source.fromFile(metainf).getLines.filter(p => p.contains(addonIdName)).toList.head
+    titleLine.split(addonIdName).last.toInt
   }
 
 }

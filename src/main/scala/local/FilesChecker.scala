@@ -14,7 +14,7 @@ class FilesChecker(val addonsFolderAbsPath: String) {
 
   def getLocalAddons: List[Path] = {
     val addons =  Files.list(addonsPath).iterator().asScala.toList
-    addons.filter(p => Files.isDirectory(p))
+    addons.filter(p => Files.isDirectory(p) && !p.getFileName.toString.contains("_"))
   }
 
 }

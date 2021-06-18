@@ -17,31 +17,102 @@
 
     <properties>
         <scala-swing.version>2.11.0-M7</scala-swing.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <scala.compat.version>2.12</scala.compat.version>
+        <scalastyle-maven-plugin.version>1.0.0</scalastyle-maven-plugin.version>
+        <spring.core.version>2.5.6</spring.core.version>
+        <scalatest.version>3.2.9</scalatest.version>
+        <zip4j.version>1.3.2</zip4j.version>
+        <scala-lang.modules.version>1.0.0-RC1</scala-lang.modules.version>
+        <curseapi.version>-39f83e2e43-1</curseapi.version>
+        <log4j-core.version>2.9.1</log4j-core.version>
+        <log4j-api.version>12.0</log4j-api.version>
+<!--        For running tests use: mvn test -Dmaven.test.skip=false-->
+        <maven.test.skip>true</maven.test.skip>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.scalastyle</groupId>
+                <artifactId>scalastyle-maven-plugin</artifactId>
+                <version>${scalastyle-maven-plugin.version}</version>
+                <configuration>
+                    <baseDirectory>${project.basedir}</baseDirectory>
+                    <buildDirectory>${project.build.directory}</buildDirectory>
+                    <configLocation>scalastyle_config.xml</configLocation>
+                    <detail>true</detail>
+                    <failOnViolation>true</failOnViolation>
+                    <failOnWarning>true</failOnWarning>
+                    <includeTestSourceDirectory>false</includeTestSourceDirectory>
+                    <indentSize>2</indentSize>
+                    <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+                    <outputEncoding>${project.build.sourceEncoding}</outputEncoding>
+                    <lineLength>80</lineLength>
+                    <outputFile>${project.build.directory}/scalastyle-output.xml</outputFile>
+                    <skip>false</skip>
+                    <sourceDirectory>${project.basedir}/src/main/scala</sourceDirectory>
+                    <testSourceDirectory>${project.basedir}/src/test/scala</testSourceDirectory>
+                    <verbose>false</verbose>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>verify</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
             <groupId>com.github.therandomlabs</groupId>
             <artifactId>curseapi</artifactId>
-            <version>-39f83e2e43-1</version>
+            <version>${curseapi.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.scala-lang.modules/scala-java8-compat -->
         <dependency>
             <groupId>org.scala-lang.modules</groupId>
-            <artifactId>scala-java8-compat_2.12</artifactId>
-            <version>1.0.0-RC1</version>
+            <artifactId>scala-java8-compat_${scala.compat.version}</artifactId>
+            <version>${scala-lang.modules.version}</version>
         </dependency>
         <dependency>
             <groupId>net.lingala.zip4j</groupId>
             <artifactId>zip4j</artifactId>
-            <version>1.3.2</version>
+            <version>${zip4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-swing</artifactId>
             <version>${scala-swing.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_${scala.compat.version}</artifactId>
+            <version>${scalatest.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api-scala_${scala.compat.version}</artifactId>
+            <version>${log4j-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>2.0.0-alpha1</version>
+        </dependency>
     </dependencies>
-
-
 </project>
