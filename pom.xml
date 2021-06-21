@@ -19,6 +19,7 @@
         <scala-swing.version>2.11.0-M7</scala-swing.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <scala.compat.version>2.12</scala.compat.version>
+        <scala-library.version>2.10.3</scala-library.version>
         <scalastyle-maven-plugin.version>1.0.0</scalastyle-maven-plugin.version>
         <spring.core.version>2.5.6</spring.core.version>
         <scalatest.version>3.2.9</scalatest.version>
@@ -72,6 +73,11 @@
             <groupId>com.github.therandomlabs</groupId>
             <artifactId>curseapi</artifactId>
             <version>${curseapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala-library.version}</version>
         </dependency>
         <dependency>
             <groupId>org.scala-lang.modules</groupId>

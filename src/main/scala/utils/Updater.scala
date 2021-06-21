@@ -18,7 +18,7 @@ class Updater(addonsFolderPath: String) {
       val mayBeAddon = Try(AddonsFinder.getAddon(addonsFolderPath + slash + addonName).get)
       mayBeAddon match {
         case Failure(failure)      => println(s"Addon: '$addonName' not found!")
-        case Success(curseProject) => {
+        case Success(curseProject) =>
           val addons = curseProject.files.asScala.toList
           val latestVersion = addons.map(f => {
             f.gameVersionStrings().asScala.toList
@@ -33,23 +33,24 @@ class Updater(addonsFolderPath: String) {
           val latestUrl = result.head.downloadURL()
           val needToUpdate = result.head.uploadTime().toLocalDateTime.isAfter(DateOperator.getCreationTime(p))
           buffer += ((addonName, (latestUrl, needToUpdate)))
-        }
       }
     })
     buffer.toMap
   }
 
-  def update(addonsToUpdate: Map[String, HttpUrl], addonsFolder: String): Unit = {
-    addonsToUpdate.foreach(addon => {
-      val addonFolder = addonsFolder + slash + addon._1
-      val addonZipFile = addonsFolder + slash + addon._1 + archiveExtension
-      val mayByFile = Try(FileOperator.downloadFile(addon._2, addonZipFile))
-      mayByFile match {
-        case Success(file) =>
-          FileOperator.removeFileOrFolder(addonFolder)
-          FileOperator.unzip(addonZipFile, addonsFolder)
-          FileOperator.removeFileOrFolder(addonZipFile)
-        case Failure(f)    => throw new Exception(f.getMessage)
+  def update(addons: Map[String, (HttpUrl, Boolean)], addonsFolder: String): Unit = {
+    addons.foreach(addon => {
+      if (addon._2._2){
+        val addonFolder = addonsFolder + slash + addon._1
+        val addonZipFile = addonsFolder + slash + addon._1 + archiveExtension
+        val mayByFile = Try(FileOperator.downloadFile(addon._2._1, addonZipFile))
+        mayByFile match {
+          case Success(file) =>
+            FileOperator.removeFileOrFolder(addonFolder)
+            FileOperator.unzip(addonZipFile, addonsFolder)
+            FileOperator.removeFileOrFolder(addonZipFile)
+          case Failure(f)    => throw new Exception(f.getMessage)
+        }
       }
     })
   }

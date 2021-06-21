@@ -11,7 +11,7 @@ import scala.util.{Failure, Success, Try}
 
 class Application extends SimpleSwingApplication {
 
-  private var addonsMap: Map[String, HttpUrl] = _
+  private var addonsMap: Map[String, (HttpUrl, Boolean)] = _
   private val (topB, leftB, bottomB, rightB) = (15, 10, 10, 10)
   private val AddonsFolderLineSize = 30
 
@@ -127,7 +127,7 @@ class Application extends SimpleSwingApplication {
   protected def checkAddons(addonsFolder: String): String = {
     val updater = new Updater(addonsFolder)
     val result = updater.checkInstalledAddons()
-    addonsMap = result.filter(p => p._2._2).map(e => (e._1, e._2._1))
+    addonsMap = result
     result.map(addon => {
       s"Addon: ${addon._1}, need to update: ${addon._2._2}"
     }).mkString("\n")
@@ -135,7 +135,7 @@ class Application extends SimpleSwingApplication {
 
   protected def updateAll(
    addonsFolder: String,
-   addonsToUpdate: Map[String, HttpUrl]
+   addonsToUpdate: Map[String, (HttpUrl, Boolean)]
   ): (String, Boolean) = {
     val updater = new Updater(addonsFolder)
     val result = Try(updater.update(addonsToUpdate, addonsFolder))

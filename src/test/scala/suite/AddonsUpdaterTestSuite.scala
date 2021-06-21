@@ -12,7 +12,7 @@ class AddonsUpdaterTestSuite(oldAddons: Boolean) extends AnyFunSuite
   with BaseScenario
   with BeforeAndAfterAll {
 
-  private val testsSuiteName: String = "ADDON'S UPDATER"
+  private val testsSuiteName: String = s"ADDON'S UPDATER - OLD ADDON'S: $oldAddons"
   private val checkInstalledAddonsTestName: String = "checkInstalledAddonsTest"
   private val checkAddonsRelevanceTestName: String = "checkAddonsRelevanceTest"
   private val checkAddonsUpdateTestName: String = "checkAddonsUpdateTest"
@@ -26,7 +26,6 @@ class AddonsUpdaterTestSuite(oldAddons: Boolean) extends AnyFunSuite
     if (oldAddons) {
       addons.foreach(addon => {
         val path = addonsFolderAbsPath + slash + addon._2
-        //     val creationDate = LocalDateTime.of(1999, 8, 24, 11, 29, 17)
         val creationDate = LocalDateTime.of(
           oldAddonsDate("yyyy"),
           oldAddonsDate("MM"),
@@ -62,7 +61,7 @@ class AddonsUpdaterTestSuite(oldAddons: Boolean) extends AnyFunSuite
 
   test(checkAddonsUpdateTestName){
     testRunningMessage(checkAddonsUpdateTestName)
-    val addons = updater.checkInstalledAddons().map(p => (p._1, p._2._1))
+    val addons = updater.checkInstalledAddons()
     val lastModBeforeUpdates = addons.map(p => (p._1, getLastModified(addonsFolderAbsPath + slash + p._1)))
     updater.update(addons, addonsFolderAbsPath)
     val lastModAfterUpdates = addons.map(p => (p._1, getLastModified(addonsFolderAbsPath + slash + p._1)))
@@ -74,8 +73,6 @@ class AddonsUpdaterTestSuite(oldAddons: Boolean) extends AnyFunSuite
         dateAfterUpdates.isAfter(dateBeforeUpdates)
       })
     } else {
-//      lastModBeforeUpdates.foreach(p => println("before: " + p._2))
-//      lastModAfterUpdates.foreach(p => println("after: " + p._2))
       compareMap(lastModBeforeUpdates, lastModAfterUpdates)
     }
     allTestsPassed = testEnded(result, checkAddonsUpdateTestName)
