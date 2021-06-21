@@ -1,5 +1,5 @@
 ## Edward's WoW Addon Manager.
-*This is application for check relevance and for update its.*
+*This is application for check relevance World of Warcraft addon's and for update its.*
 
 **_USE:_**
 
