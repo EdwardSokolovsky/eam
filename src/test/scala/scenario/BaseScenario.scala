@@ -3,6 +3,12 @@ package scenario
 import messages.TestMessages
 import utils.FileOperator
 import properties.GeneralProperties._
+import java.nio.file.attribute.BasicFileAttributeView
+import java.nio.file.attribute.FileTime
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.nio.file.{Files, Paths}
+import java.time.ZoneId
 
 trait BaseScenario extends TestMessages {
 
@@ -48,7 +54,7 @@ trait BaseScenario extends TestMessages {
     }
   }
 
-  protected[scenario] def compareLists(
+  protected[scenario] def compareCollection(
    expected: Iterable[Any],
    actual: Iterable[Any]
   ): Boolean = {
@@ -60,6 +66,39 @@ trait BaseScenario extends TestMessages {
     } else {
       true
     }
+  }
+
+  protected[scenario] def compareMap(
+   expected: Map[String, FileTime],
+   actual: Map[String, FileTime]
+  ): Boolean = {
+    val diff = (expected.toSet diff actual.toSet).toMap
+    if(diff.nonEmpty){
+      logger.info("Difference: ")
+      diff.foreach(println)
+    }
+    diff.isEmpty
+  }
+
+  protected[scenario] def fileTimeToLocalDateTime(fileTime: FileTime): LocalDateTime = {
+    LocalDateTime.ofInstant(fileTime.toInstant, ZoneId.systemDefault)
+  }
+
+  protected[scenario] def setLastModified(fileAbsPath: String, dateTime: LocalDateTime): Unit = {
+    val path = Paths.get(fileAbsPath)
+    val instant = dateTime.toInstant(ZoneOffset.UTC)
+    Files.setLastModifiedTime(path, FileTime.from(instant))
+  }
+
+  protected[scenario] def setCreationTime(fileAbsPath: String, dateTime: LocalDateTime): Unit = {
+    val attributes = Files.getFileAttributeView(Paths.get(fileAbsPath), classOf[BasicFileAttributeView])
+    val time = FileTime.from(dateTime.toInstant(ZoneOffset.UTC))
+    attributes.setTimes(time, time, time)
+  }
+
+  protected[scenario] def getLastModified(fileAbsPath: String): FileTime = {
+    val attributes = Files.getFileAttributeView(Paths.get(fileAbsPath), classOf[BasicFileAttributeView])
+    attributes.readAttributes.lastModifiedTime
   }
 
 
