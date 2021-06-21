@@ -14,4 +14,4 @@
 * **For run tests:**
     * (go **${project.basedir}/src/test/scala**) run TestController.class
 
-![Application screenshot](url)
+![Application_screenshot](https://github.com/EdwardSokolovsky/eam/blob/develop/images/screen_eam.png)
