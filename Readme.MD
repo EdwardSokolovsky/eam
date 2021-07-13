@@ -9,9 +9,9 @@
 
 * **For run app from IDE:**
   * build project: mvn clean install
-  * (go **${project.basedir}/src/main/scala/app**) run AppRunner.object
+  * (go to **${project.basedir}/src/main/scala/app**) run AppRunner.object
 
 * **For run tests:**
-    * (go **${project.basedir}/src/test/scala**) run TestController.class
+    * (go to **${project.basedir}/src/test/scala**) run TestController.class
 
 ![Application_screenshot](https://github.com/EdwardSokolovsky/eam/blob/master/images/screen_eam.png)
